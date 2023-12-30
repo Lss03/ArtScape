@@ -46,12 +46,12 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
   name: 'LoginForm',
   data() {
     return {
       isRegistering: false,
-      users: [], // Simulating a user database
       login: {
         username: '',
         password: ''
@@ -69,24 +69,21 @@ export default {
       this.isRegistering = !this.isRegistering;
     },
     signIn() {
-  const user = this.users.find(u => u.username === this.login.username);
-  if (!user) {
-    alert('User does not exist.');
-    this.clearLoginForm();
-    return;
-  }
-  if (user.password === this.login.password) {
-    this.$router.replace('/Mypage'); // Navigate to user profile
-  } else {
-    alert('Username or Password is incorrect.');
-    this.clearLoginForm();
-  }
-},
-  clearLoginForm() {
-  this.login.username = '';
-  this.login.password = '';
-},
-signUp() {
+      axios.get(`http://localhost:3000/users?username=${this.login.username}`)
+        .then(response => {
+          const user = response.data[0];
+          if (!user) {
+            alert('User does not exist.');
+            this.clearLoginForm();
+          } else if (user.password === this.login.password) {
+            this.$router.replace('/Mypage'); // Replace with actual route
+          } else {
+            alert('Username or Password is incorrect.');
+            this.clearLoginForm();
+          }
+        });
+    },
+    signUp() {
       if (!this.register.username || !this.register.email || !this.register.password) {
         alert("Username, Email Address, and Password cannot be empty");
         return;
@@ -95,19 +92,26 @@ signUp() {
         alert("Passwords do not match");
         return;
       }
-      const userExists = this.users.some(u => u.username === this.register.username);
-      if (userExists) {
-        alert("Username already exists");
-        this.clearRegistrationForm();
-        return;
-      }
-      this.users.push({
-        username: this.register.username,
-        email: this.register.email,
-        password: this.register.password
-      });
-      alert("Registration successful");
-      this.toggleSignup();
+      axios.get(`http://localhost:3000/users?username=${this.register.username}`)
+        .then(response => {
+          if (response.data.length > 0) {
+            alert("Username already exists");
+            this.clearRegistrationForm();
+          } else {
+            axios.post('http://localhost:3000/users', {
+              username: this.register.username,
+              email: this.register.email,
+              password: this.register.password
+            }).then(() => {
+              alert("Registration successful");
+              this.toggleSignup();
+            });
+          }
+        });
+    },
+    clearLoginForm() {
+      this.login.username = '';
+      this.login.password = '';
     },
     clearRegistrationForm() {
       this.register.username = '';
