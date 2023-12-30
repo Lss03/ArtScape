@@ -46,15 +46,15 @@
   </div>
 </template>
 <script>
+import userData from '@/api/user.js'; // Adjust the path as necessary
+
 export default {
   name: 'LoginForm',
   props: {
-    // eslint-disable-next-line vue/require-prop-types
-    isRegistering: Boolean // 从父组件接收 isRegistering
+    isRegistering: Boolean // Received from parent component
   },
   data() {
     return {
-      users: [], // Simulating a user database
       login: {
         username: '',
         password: ''
@@ -72,24 +72,24 @@ export default {
       this.$emit('toggle-signup');
     },
     signIn() {
-  const user = this.users.find(u => u.username === this.login.username);
-  if (!user) {
-    alert('User does not exist.');
-    this.clearLoginForm();
-    return;
-  }
-  if (user.password === this.login.password) {
-    this.$router.replace('/Mypage'); // Navigate to user profile
-  } else {
-    alert('Username or Password is incorrect.');
-    this.clearLoginForm();
-  }
-},
-  clearLoginForm() {
-  this.login.username = '';
-  this.login.password = '';
-},
-signUp() {
+      userData.getUserInfo(users => {
+        const user = users.find(u => u.username === this.login.username);
+        if (!user) {
+          alert('User does not exist.');
+          this.clearLoginForm();
+          return;
+        }
+        if (user.password === this.login.password) {
+          this.$router.replace('/Mypage'); // 导航到用户页面
+        } else {
+          alert('Username or Password is incorrect.');
+          this.clearLoginForm();
+        }
+      });
+    },
+
+    signUp() {
+      // 注册逻辑
       if (!this.register.username || !this.register.email || !this.register.password) {
         alert("Username, Email Address, and Password cannot be empty");
         return;
@@ -98,29 +98,41 @@ signUp() {
         alert("Passwords do not match");
         return;
       }
-      const userExists = this.users.some(u => u.username === this.register.username);
-      if (userExists) {
-        alert("Username already exists");
-        this.clearRegistrationForm();
-        return;
-      }
-      this.users.push({
-        username: this.register.username,
-        email: this.register.email,
-        password: this.register.password
+      userData.getUserInfo(users => {
+        const userExists = users.some(u => u.username === this.register.username);
+        if (userExists) {
+          alert("Username already exists");
+          this.clearRegistrationForm();
+          return;
+        }
+        const newUser = {
+          id: users.length + 1,
+          username: this.register.username,
+          email: this.register.email,
+          password: this.register.password,
+          // 其他属性
+        };
+        // 调用 updateUserInfo 或 addUser（取决于您如何命名）
+        userData.updateUserInfo(newUser, () => {
+          alert("Registration successful");
+          this.toggleSignup();
+        });
       });
-      alert("Registration successful");
-      this.toggleSignup();
     },
     clearRegistrationForm() {
       this.register.username = '';
       this.register.email = '';
       this.register.password = '';
       this.register.confirmPassword = '';
-    }
+    },
+    clearLoginForm() {
+      this.login.username = '';
+      this.login.password = '';
+ },
   }
 };
 </script>
+
 <style scoped>
 @import '@/assets/css/loginFormStyles.css';
 /* Additional styles as needed */

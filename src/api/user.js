@@ -1,28 +1,25 @@
-let userData = {
-    id: null,
-    name: '神秘人',
-    pwd: '',
-    nickname: '',
-    avatar: '',
-    fans: 10,
-    likes: 0,
-    works: 0,
-    email: ''
-};
-
-export default {
-    // 获取用户信息
-    getUserInfo(callback) {
-        setTimeout(() => callback(userData), 100);
-    },
-
-    // 更新用户信息
-    updateUserInfo(newUserInfo, callback) {
-        setTimeout(() => {
-            userData = {...userData, ...newUserInfo};
-            callback(userData);
-        }, 100);
-    },
-
-    // 可以在此添加更多与用户相关的方法
-};
+let usersData = [
+    // 示例用户
+    { id: 1, 
+      username: '神秘人',
+      password: '12345', 
+      nickname: '',
+      avatar: '',
+      fans: 10,
+      likes: 0,
+      works: 0,
+      email: '' }
+  ];
+  
+  export default {
+      getUserInfo(callback) {
+          setTimeout(() => callback(usersData), 100);
+      },
+      updateUserInfo(newUser, callback) {
+          setTimeout(() => {
+              usersData.push(newUser);
+              callback(newUser);
+          }, 100);
+      },
+      // 其他方法...
+  };
