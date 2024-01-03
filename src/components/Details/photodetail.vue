@@ -65,7 +65,7 @@
                 dense
                 class="flex-grow-1"
             ></v-text-field>
-            <v-btn color="primary" @click="submitComment">提交</v-btn>
+            <v-btn color="primary" id="but" @click="submitComment">提交</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -124,6 +124,10 @@ export default {
 </script>
 
 <style scoped>
+#but{
+  margin-bottom: 25px;
+  margin-left: 8px;
+}
 .author-info {
   display: flex;
   align-items: center;

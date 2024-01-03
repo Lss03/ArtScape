@@ -32,16 +32,12 @@
       <v-col cols="12" class="d-flex justify-end align-center input-button-container">
         <v-file-input v-model="imageFile" prepend-icon="mdi-camera" label="上传图片" filled>
         </v-file-input>
+        <!-- 发送按钮 -->
         <v-btn class="ml-2" color="success" @click="sendImageToAI">发送</v-btn>
 
       </v-col>
     </v-row>
-<!-- 发送按钮 -->
-    <span class="but">
 
-
-
-    </span>
 
     <!-- 保存确认对话框 -->
     <v-dialog v-model="showConfirmationDialog" max-width="400">
@@ -61,7 +57,9 @@
 
 <style scoped>
 
-
+.ml-2{
+  margin-bottom: 9px;
+}
 
   .pa-0{
     margin: 0;
